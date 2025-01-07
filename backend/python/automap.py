@@ -25,6 +25,10 @@ def main(image_path, output_json_path):
     skeleton_graph = skan.Skeleton(skeleton)
     graph = skan.csr.skeleton_to_nx(skeleton_graph)
 
+    # Asegurarse de que el grafo sea un multigrafo para manejar claves únicas
+    if not isinstance(graph, nx.MultiGraph) and not isinstance(graph, nx.MultiDiGraph):
+        graph = nx.MultiGraph(graph)
+
     # Agregar atributos de posición (X, Y) a los nodos
     for node in graph.nodes:
         y, x = skeleton_graph.coordinates[node]  # Coordenadas del nodo
