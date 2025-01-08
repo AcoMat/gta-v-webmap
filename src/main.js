@@ -8,7 +8,7 @@ const ctx = canvas.getContext('2d');
 document.getElementById('map').addEventListener('click', function(event) {
     const coordenadas = obtenerCoordenadasRelativas(event);
     console.log(`Coordenadas relativas: X=${coordenadas.x}, Y=${coordenadas.y}`);
-    console.log('Nodo más cercano:', buscarNodoMasCercano(coordenadas.x, coordenadas.y));
+    console.log(buscarNodoMasCercano(coordenadas.x, coordenadas.y));
     
 });
 
@@ -47,8 +47,9 @@ function obtenerCoordenadasRelativas(event) {
 
 function buscarNodoMasCercano(x,y) {
     const radius = 20;
-    console.log(index.within(x, y, radius));
+    console.log("nodo mas cercano", index.within(x, y, radius)[0]);
     return graph_data.nodes[index.within(x, y, radius)[0]];
+    //TODO: agrandar el radius hasta que se encuentre un nodo
 }
 
 
