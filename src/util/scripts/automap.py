@@ -25,6 +25,15 @@ def main(image_path, output_json_path):
     skeleton_graph = skan.Skeleton(skeleton)
     graph = skan.csr.skeleton_to_nx(skeleton_graph)
 
+    # Visualizar el grafo del esqueleto
+    plt.figure(figsize=(10, 10))
+    plt.imshow(image, cmap='gray')
+    
+    pos = {i: (skeleton_graph.coordinates[i, 1], skeleton_graph.coordinates[i, 0]) for i in range(skeleton_graph.coordinates.shape[0])}
+    nx.draw(graph, pos, with_labels=True, node_size=50, node_color="blue", edge_color="gray")
+    
+    plt.show()
+
     # Asegurarse de que el grafo sea un multigrafo para manejar claves únicas
     if not isinstance(graph, nx.MultiGraph) and not isinstance(graph, nx.MultiDiGraph):
         graph = nx.MultiGraph(graph)
@@ -79,7 +88,7 @@ def main(image_path, output_json_path):
 
 
 # Ruta de la imagen del mapa y salida JSON
-image_path = r"F:\VSCODE-Repos\gta-v-webmap\backend\python\map_image.png"
-output_json_path = r"F:\VSCODE-Repos\gta-v-webmap\backend\python\graph_data.json"
+image_path = r"F:\VSCODE-Repos\gta-v-webmap\src\util\map_image.png"
+output_json_path = r"F:\VSCODE-Repos\gta-v-webmap\src\util\graph_data.json"
 
 main(image_path, output_json_path)

@@ -8,6 +8,8 @@ const ctx = canvas.getContext('2d');
 document.getElementById('map').addEventListener('click', function(event) {
     const coordenadas = obtenerCoordenadasRelativas(event);
     console.log(`Coordenadas relativas: X=${coordenadas.x}, Y=${coordenadas.y}`);
+    console.log('Nodo más cercano:', buscarNodoMasCercano(coordenadas.x, coordenadas.y));
+    
 });
 
 // Función para dibujar puntos rojos
@@ -32,9 +34,6 @@ for (let i = 0; i < graph_data.nodes.length; i++) {
 
 index.finish();
 
-console.log(index.within(0, 0, 5));
-
-
 function obtenerCoordenadasRelativas(event) {
     // Obtener la posición de la imagen en la página
     const rect = event.target.getBoundingClientRect();
@@ -47,7 +46,9 @@ function obtenerCoordenadasRelativas(event) {
 }
 
 function buscarNodoMasCercano(x,y) {
-    //TODO
+    const radius = 20;
+    console.log(index.within(x, y, radius));
+    return graph_data.nodes[index.within(x, y, radius)[0]];
 }
 
 
