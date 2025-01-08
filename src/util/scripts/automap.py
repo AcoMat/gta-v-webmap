@@ -26,7 +26,7 @@ def main(image_path, output_json_path):
     graph = skan.csr.skeleton_to_nx(skeleton_graph)
 
     # Visualizar el grafo del esqueleto
-    plt.figure(figsize=(10, 10))
+    plt.figure(figsize=(10, 5))
     plt.imshow(image, cmap='gray')
     
     pos = {i: (skeleton_graph.coordinates[i, 1], skeleton_graph.coordinates[i, 0]) for i in range(skeleton_graph.coordinates.shape[0])}

@@ -92,11 +92,18 @@ for (let i = 0; i < graph_data.edges.length; i++) {
     g.addLink(source.toString(), target.toString(), {weight: weight.toString()});
 }
 
-console.log(g.getNode('20'));
+console.log(g.getNode('3040'));
 
 
 //Pathfinding
-let pathFinder = ngraphPath.aStar(g);
+let pathFinder = ngraphPath.aStar(g, {
+    // We tell our pathfinder what should it use as a distance function:
+    distance(fromNode, toNode, link) {
+      // We don't really care about from/to nodes in this case,
+      // as link.data has all needed information:
+      return link.data.weight;
+    }
+  });
 
 let fromNodeId = "20";
 let toNodeId = "1534";
