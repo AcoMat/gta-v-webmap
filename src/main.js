@@ -15,7 +15,10 @@ document.getElementById('map').addEventListener('click', function(event) {
     if (sourceSelected === null) {
         sourceSelected = nearestNode;
     } else {
-        buscarRuta(sourceSelected, nearestNode);
+        const ruta = buscarRuta(sourceSelected, nearestNode);
+        console.log(ruta);
+        pintarRuta(ruta);
+        sourceSelected = null;
     }
 });
 
@@ -104,8 +107,26 @@ console.log(foundPath);
 
 function buscarRuta(source, target) {
     console.log("Buscando ruta de", source, "a", target);
-    const sourceIndex = graph_data.nodes.indexOf(source);
-    const targetIndex = graph_data.nodes.indexOf(target);
-    
-
+    return pathFinder.find(source.id.toString(), target.id.toString());
 }
+
+function pintarRuta(listaNodos) {
+    ctx.strokeStyle = 'green';
+    ctx.lineWidth = 2;
+    
+    // Comenzar a dibujar
+    ctx.beginPath();
+    
+    // Mover al primer nodo
+    ctx.moveTo(Number(listaNodos[0].data.x), Number(listaNodos[0].data.y));
+
+    // Iterar sobre los nodos restantes y dibujar líneas
+    for (let i = 1; i < listaNodos.length; i++) {
+        ctx.lineTo(Number(listaNodos[i].data.x), Number(listaNodos[i].data.y));
+    }
+
+    // Terminar el dibujo
+    ctx.stroke();
+}
+
+//clear ctx.clearRect(0, 0, canvas.width, canvas.height);
