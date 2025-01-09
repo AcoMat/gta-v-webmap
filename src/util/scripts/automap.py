@@ -6,10 +6,21 @@ from skan.pre import threshold
 from skimage.util import img_as_ubyte
 import matplotlib.pyplot as plt
 import numpy as np
-import json
 
 
-def main(image_path, output_json_path):
+
+def plot_graph(image, graph, skeleton_graph, title):
+    """Función para visualizar el grafo sobre la imagen"""
+    plt.figure(figsize=(10, 5))
+    plt.imshow(image, cmap='gray')  # Mostrar la imagen de fondo
+    
+    pos = {i: (skeleton_graph.coordinates[i, 1], skeleton_graph.coordinates[i, 0]) for i in range(skeleton_graph.coordinates.shape[0])}
+    nx.draw(graph, pos, with_labels=True, node_size=50, node_color="blue", edge_color="gray")
+    
+    plt.title(title)
+    plt.show()
+
+def main(image_path, output_js_path):
     # Leer la imagen
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
     
@@ -24,15 +35,6 @@ def main(image_path, output_json_path):
 
     skeleton_graph = skan.Skeleton(skeleton)
     graph = skan.csr.skeleton_to_nx(skeleton_graph)
-
-    # Visualizar el grafo del esqueleto
-    plt.figure(figsize=(10, 5))
-    plt.imshow(image, cmap='gray')
-    
-    pos = {i: (skeleton_graph.coordinates[i, 1], skeleton_graph.coordinates[i, 0]) for i in range(skeleton_graph.coordinates.shape[0])}
-    nx.draw(graph, pos, with_labels=True, node_size=50, node_color="blue", edge_color="gray")
-    
-    plt.show()
 
     # Asegurarse de que el grafo sea un multigrafo para manejar claves únicas
     if not isinstance(graph, nx.MultiGraph) and not isinstance(graph, nx.MultiDiGraph):
@@ -54,7 +56,9 @@ def main(image_path, output_json_path):
 
     nx.set_edge_attributes(graph, edge_weights, 'weight')
 
-    # Convertir nodos y aristas a un formato JSON
+    plot_graph(image, graph, skeleton_graph, "Grafo")
+
+    # Convertir nodos y aristas a un formato adecuado para JavaScript
     nodes = []
     edges = []
 
@@ -74,21 +78,23 @@ def main(image_path, output_json_path):
             "weight": data['weight']
         })
 
-    # Crear estructura JSON
-    graph_data = {
-        "nodes": nodes,
-        "edges": edges
-    }
+    # Crear la estructura de datos en formato JS
+    js_content = f"""
+export const graph_data = {{
+    "nodes": {nodes},
+    "edges": {edges}
+}};
+"""
 
-    # Guardar en un archivo JSON
-    with open(output_json_path, 'w') as json_file:
-        json.dump(graph_data, json_file, indent=4)
+    # Guardar en un archivo JavaScript
+    with open(output_js_path, 'w') as js_file:
+        js_file.write(js_content)
 
-    print(f"Datos del grafo guardados en {output_json_path}")
+    print(f"Datos del grafo guardados en {output_js_path}")
 
 
-# Ruta de la imagen del mapa y salida JSON
+# Ruta de la imagen del mapa y salida JavaScript
 image_path = r"F:\VSCODE-Repos\gta-v-webmap\src\util\map_image.png"
-output_json_path = r"F:\VSCODE-Repos\gta-v-webmap\src\util\graph_data.json"
+output_js_path = r"F:\VSCODE-Repos\gta-v-webmap\src\util\graph_data.js"
 
-main(image_path, output_json_path)
+main(image_path, output_js_path)

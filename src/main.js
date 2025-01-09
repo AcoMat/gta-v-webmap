@@ -25,10 +25,10 @@ document.getElementById('map').addEventListener('click', function(event) {
 // Función para dibujar puntos rojos
 function dibujarPuntos(coordenadas) {
     console.log('Dibujando puntos:', coordenadas);
-    ctx.fillStyle = 'red'; // Color de los puntos
+    ctx.fillStyle = 'green'; // Color de los puntos
     coordenadas.nodes.forEach(coord => {
         ctx.beginPath();
-        ctx.arc(coord.x, coord.y, 5, 0, Math.PI * 2); // Dibuja un círculo
+        ctx.arc(coord.x, coord.y, 1, 0, Math.PI * 1); // Dibuja un círculo
         ctx.fill();
     });
 }
@@ -56,7 +56,7 @@ function obtenerCoordenadasRelativas(event) {
 }
 
 function buscarNodoMasCercano(x,y) {
-    const radius = 20;
+    const radius = 5;
     console.log("nodo mas cercano", index.within(x, y, radius)[0]);
     const nearestNode = graph_data.nodes[index.within(x, y, radius)[0]];
     //TODO: agrandar el radius hasta que se encuentre un nodo
@@ -67,7 +67,7 @@ function buscarNodoMasCercano(x,y) {
 function pintarNodoMasCercano(nearestNode) {
     ctx.fillStyle = 'blue';
     ctx.beginPath();
-    ctx.arc(nearestNode.x, nearestNode.y, 6, 0, Math.PI * 2);
+    ctx.arc(nearestNode.x, nearestNode.y, 3, 0, Math.PI * 2);
     ctx.fill();
 }
 
@@ -88,22 +88,13 @@ console.log(g.getNode('20'));
 
 //Agrego aristas
 for (let i = 0; i < graph_data.edges.length; i++) {
-    const {source, target, weight} = graph_data.edges[i];
-    g.addLink(source.toString(), target.toString(), {weight: weight.toString()});
+    const {source, target} = graph_data.edges[i];
+    g.addLink(source.toString(), target.toString());
 }
-
-console.log(g.getNode('3040'));
 
 
 //Pathfinding
-let pathFinder = ngraphPath.aStar(g, {
-    // We tell our pathfinder what should it use as a distance function:
-    distance(fromNode, toNode, link) {
-      // We don't really care about from/to nodes in this case,
-      // as link.data has all needed information:
-      return link.data.weight;
-    }
-  });
+let pathFinder = ngraphPath.aStar(g);
 
 let fromNodeId = "20";
 let toNodeId = "1534";
@@ -118,8 +109,12 @@ function buscarRuta(source, target) {
 }
 
 function pintarRuta(listaNodos) {
-    ctx.strokeStyle = 'green';
-    ctx.lineWidth = 2;
+    if(listaNodos.length === 0) {
+        console.log("No se encontró ruta");
+        return;
+    }
+    ctx.strokeStyle = 'purple';
+    ctx.lineWidth = 3;
     
     // Comenzar a dibujar
     ctx.beginPath();
