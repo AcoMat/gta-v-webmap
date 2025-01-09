@@ -4,20 +4,125 @@ import {graph_data} from './util/graph_data.js';
 // Obtener el canvas y su contexto
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
+let cw = canvas.width;
+let ch = canvas.height;
+const image = document.getElementById('map');
 
 let sourceSelected = null;
 
-document.getElementById('map').addEventListener('click', function(event) {
+// account for scrolling
+function reOffset() {
+    let BB = canvas.getBoundingClientRect();
+    offsetX = BB.left;
+    offsetY = BB.top;
+}
+let offsetX, offsetY;
+reOffset();
+window.onscroll = function (e) { reOffset(); }
+window.onresize = function (e) { reOffset(); }
+
+// mouse drag related letiables
+let isDown = false;
+let startX, startY;
+
+// the accumulated horizontal(X) & vertical(Y) panning the user has done in total
+let netPanningX = 0;
+let netPanningY = 0;
+
+
+// draw the numbered horizontal & vertical reference lines
+ctx.drawImage(image, 0, 0, image.width, image.height);
+
+// listen for mouse events
+canvas.addEventListener("mousedown", (e) => { handleMouseDown(e); });
+canvas.addEventListener("mousemove", (e) => { handleMouseMove(e); });
+canvas.addEventListener("mouseup", (e) => { handleMouseUp(e); });
+canvas.addEventListener("mouseout", (e) => { handleMouseOut(e); });
+
+function handleMouseDown(e) {
+    // tell the browser we're handling this event
+    e.preventDefault();
+    e.stopPropagation();
+
+    // calc the starting mouse X,Y for the drag
+    startX = parseInt(e.clientX - offsetX);
+    startY = parseInt(e.clientY - offsetY);
+
+    // set the isDragging flag
+    isDown = true;
+}
+
+function handleMouseUp(e) {
+    // tell the browser we're handling this event
+    e.preventDefault();
+    e.stopPropagation();
+
+    // clear the isDragging flag
+    isDown = false;
+    console.log("netPanningX: " + netPanningX + " netPanningY: " + netPanningY);
+    
+}
+
+function handleMouseOut(e) {
+    // tell the browser we're handling this event
+    e.preventDefault();
+    e.stopPropagation();
+
+    // clear the isDragging flag
+    isDown = false;
+}
+
+function handleMouseMove(e) {
+
+    // only do this code if the mouse is being dragged
+    if (!isDown) { return; }
+
+    // tell the browser we're handling this event
+    e.preventDefault();
+    e.stopPropagation();
+
+    // get the current mouse position
+    let mouseX = parseInt(e.clientX - offsetX);
+    let mouseY = parseInt(e.clientY - offsetY);
+
+    // dx & dy are the distance the mouse has moved since
+    // the last mousemove event
+    let dx = mouseX - startX;
+    let dy = mouseY - startY;
+
+    // reset the lets for next mousemove
+    startX = mouseX;
+    startY = mouseY;
+
+    // accumulate the net panning done
+    netPanningX += dx;
+    netPanningY += dy;
+
+    // display the horizontal & vertical reference lines
+    // The horizontal line is offset leftward or rightward by netPanningX
+    // The vertical line is offset upward or downward by netPanningY
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.drawImage(image, netPanningX, netPanningY, image.width, image.height);
+    dibujarPuntos(graph_data);
+    pintarRuta(actualRoute);
+}
+
+
+//TODO: manejar bien los nodos seleccionados, quizas una variable para source y target, y reiniciar en nueva ruta
+let actualRoute = null
+
+document.getElementById('myCanvas').addEventListener('dblclick', function(event) {
     const coordenadas = obtenerCoordenadasRelativas(event);
     console.log(`Coordenadas relativas: X=${coordenadas.x}, Y=${coordenadas.y}`);
     let nearestNode = buscarNodoMasCercano(coordenadas.x, coordenadas.y);
     pintarNodoMasCercano(nearestNode);
     if (sourceSelected === null) {
         sourceSelected = nearestNode;
+        actualRoute = null
     } else {
-        const ruta = buscarRuta(sourceSelected, nearestNode);
-        console.log(ruta);
-        pintarRuta(ruta);
+        actualRoute = buscarRuta(sourceSelected, nearestNode);
+        console.log(actualRoute);
+        pintarRuta(actualRoute);
         sourceSelected = null;
     }
 });
@@ -28,7 +133,7 @@ function dibujarPuntos(coordenadas) {
     ctx.fillStyle = 'green'; // Color de los puntos
     coordenadas.nodes.forEach(coord => {
         ctx.beginPath();
-        ctx.arc(coord.x, coord.y, 1, 0, Math.PI * 1); // Dibuja un círculo
+        ctx.arc(coord.x+netPanningX, coord.y+netPanningY, 1, 0, Math.PI * 1); // Dibuja un círculo
         ctx.fill();
     });
 }
@@ -49,8 +154,8 @@ function obtenerCoordenadasRelativas(event) {
     const rect = event.target.getBoundingClientRect();
 
     // Calcular las coordenadas relativas al inicio de la imagen
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+    const x = event.clientX - rect.left - netPanningX;
+    const y = event.clientY - rect.top - netPanningY;
 
     return { x, y };
 }
@@ -67,7 +172,7 @@ function buscarNodoMasCercano(x,y) {
 function pintarNodoMasCercano(nearestNode) {
     ctx.fillStyle = 'blue';
     ctx.beginPath();
-    ctx.arc(nearestNode.x, nearestNode.y, 3, 0, Math.PI * 2);
+    ctx.arc(nearestNode.x+netPanningX, nearestNode.y+netPanningY, 3, 0, Math.PI * 2);
     ctx.fill();
 }
 
@@ -109,7 +214,7 @@ function buscarRuta(source, target) {
 }
 
 function pintarRuta(listaNodos) {
-    if(listaNodos.length === 0) {
+    if(!listaNodos || listaNodos.length === 0) {
         console.log("No se encontró ruta");
         return;
     }
@@ -120,11 +225,11 @@ function pintarRuta(listaNodos) {
     ctx.beginPath();
     
     // Mover al primer nodo
-    ctx.moveTo(Number(listaNodos[0].data.x), Number(listaNodos[0].data.y));
+    ctx.moveTo(Number(listaNodos[0].data.x)+netPanningX, Number(listaNodos[0].data.y)+netPanningY);
 
     // Iterar sobre los nodos restantes y dibujar líneas
     for (let i = 1; i < listaNodos.length; i++) {
-        ctx.lineTo(Number(listaNodos[i].data.x), Number(listaNodos[i].data.y));
+        ctx.lineTo(Number(listaNodos[i].data.x)+netPanningX, Number(listaNodos[i].data.y)+netPanningY);
     }
 
     // Terminar el dibujo
