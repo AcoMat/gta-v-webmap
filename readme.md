@@ -9,6 +9,7 @@
 * Automatizar el procesamiento de la imagen del mapa para la extraccion de grafos.
 
 ### TODO:
+* refactorizar el codigo, mejorar estructura, etc
 * Redimencionar pagina
 * Testeo general del grafo
 * Refinar curvas en el grafo
