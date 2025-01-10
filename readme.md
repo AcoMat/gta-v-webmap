@@ -1,6 +1,8 @@
 # Mapa ficticio interactivo con gps
 ## Basado en el mapa del videojuego GTA 5
 
+![preview](https://github.com/user-attachments/assets/cc2e67c2-8412-40fe-b865-b0ee943d5a84)
+
 ### Desafios:
 * Crear una web con el mapa, en la que se pueda hacer zoom y arrastar.
 * Utilizar Teoria de Grafos para desarrollar un gps.
