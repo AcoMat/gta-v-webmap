@@ -9,6 +9,7 @@
 * Automatizar el procesamiento de la imagen del mapa para la extraccion de grafos.
 
 ### TODO:
+* Agregar capas faltantes en el grafo que se utiliza para el gps (Puentes, Autopistas, Intersecciones complejas)
 * refactorizar el codigo, mejorar estructura, etc
 * Redimencionar pagina
 * Testeo general del grafo

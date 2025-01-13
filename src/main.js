@@ -133,7 +133,7 @@ function dibujarPuntos(coordenadas) {
     ctx.fillStyle = 'green'; // Color de los puntos
     coordenadas.nodes.forEach(coord => {
         ctx.beginPath();
-        ctx.arc(coord.x+netPanningX, coord.y+netPanningY, 1, 0, Math.PI * 1); // Dibuja un círculo
+        ctx.arc(coord.x+netPanningX, coord.y+netPanningY, 4, 0, Math.PI * 2); // Dibuja un círculo
         ctx.fill();
     });
 }
