@@ -7,6 +7,57 @@ from skimage.util import img_as_ubyte
 import matplotlib.pyplot as plt
 import numpy as np
 
+def merge_close_nodes(graph, distance_threshold=5):
+    """
+    Fusiona nodos cercanos en un grafo, ajustando sus aristas.
+
+    Args:
+        graph (networkx.Graph): Grafo con atributos X e Y en los nodos.
+        distance_threshold (int): Distancia máxima en píxeles para fusionar nodos.
+
+    Returns:
+        networkx.Graph: Grafo con nodos fusionados.
+    """
+    # Crear una lista de nodos para iterar sin modificar dinámicamente
+    nodes_to_merge = list(graph.nodes(data=True))
+
+    # Mapeo de nodos fusionados
+    merged_nodes = {}
+
+    for i, (node1, data1) in enumerate(nodes_to_merge):
+        if node1 not in graph:
+            continue  # Si el nodo ya fue eliminado, ignorarlo
+
+        x1, y1 = data1['X'], data1['Y']
+
+        for j, (node2, data2) in enumerate(nodes_to_merge):
+            if i >= j or node2 not in graph or node2 in merged_nodes:
+                continue  # Evitar repetir fusiones o trabajar con nodos eliminados
+
+            x2, y2 = data2['X'], data2['Y']
+            if abs(x1 - x2) <= distance_threshold and abs(y1 - y2) <= distance_threshold:
+                # Fusionar node2 en node1
+                merged_nodes[node2] = node1
+
+                # Transferir las aristas de node2 a node1
+                for neighbor in list(graph.neighbors(node2)):
+                    if neighbor != node1:  # Evitar auto-bucles
+                        weight = graph[node2][neighbor][0]['weight']
+                        graph.add_edge(node1, neighbor, weight=weight)
+
+                # Eliminar el nodo fusionado
+                graph.remove_node(node2)
+
+    # Actualizar las coordenadas de los nodos fusionados (promedio de coordenadas)
+    for node1 in set(merged_nodes.values()):
+        related_nodes = [n for n, m in merged_nodes.items() if m == node1] + [node1]
+        avg_x = int(np.mean([graph.nodes[n]['X'] for n in related_nodes if n in graph]))
+        avg_y = int(np.mean([graph.nodes[n]['Y'] for n in related_nodes if n in graph]))
+        graph.nodes[node1]['X'] = avg_x
+        graph.nodes[node1]['Y'] = avg_y
+
+    return graph
+
 def findNodesInRedArea(graph, image):
     """
     Encuentra los nodos en el grafo que se superponen con píxeles rojos en la imagen.
@@ -92,6 +143,8 @@ def main(image_path, output_js_path):
     for node in nodes_to_remove:
         if graph.has_node(node):  # Verificar si el nodo existe en el grafo
             graph.remove_node(node)
+
+    graph = merge_close_nodes(graph, distance_threshold=5)
 
     plot_graph(image, graph, skeleton_graph, "Grafo después de eliminar nodos")
 
