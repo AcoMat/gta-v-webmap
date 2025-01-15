@@ -1,34 +1,38 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>Gta v Map Online</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fugaz+One&family=Roboto:wdth,wght@75,100..900&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
-    <div>
-        <div class="game-container">
-            <div class="game-info">
-                <span class="title">Grand Theft Auto V</span>
-                <div class="profile-container">
-                    <div class="profile-info">
-                        <span>AcoMat</span>
-                        <span>Dia de hoy</span>
-                        <span>$0</span>
-                    </div>
-                    <img class="git-avatar" src="https://avatars.githubusercontent.com/u/90214806?v=4">
+    <div class="game-container">
+        <div class="game-info">
+            <span class="title roboto-font">Grand Theft Auto V</span>
+            <div class="profile-container">
+                <div class="profile-info">
+                    <span class="roboto-font">AcoMat</span>
+                    <span id="timeDisplay" class="roboto-font">Dia de hoy</span>
+                    <span class="roboto-font">$0</span>
                 </div>
+                <a href="https://www.github.com/AcoMat" class="clickable"><img class="git-avatar" src="https://avatars.githubusercontent.com/u/90214806?v=4"></a>
             </div>
-            <div class="game-menu">
-                <div class="map-option">MAP</div>
-                <div class="map-option">BRIEF</div>
-                <div class="map-option">STATS</div>
-                <div class="map-option">SETTINGS</div>
-                <div class="map-option">GAME</div>
-                <div class="map-option">GITHUB</div>
-            </div>
+        </div>
+        <div class="game-menu">
+            <div class="map-option selected clickable">MAP</div>
+            <div class="map-option-disabled">BRIEF</div>
+            <div class="map-option-disabled">STATS</div>
+            <div class="map-option-disabled">SETTINGS</div>
+            <a href="https://www.github.com/AcoMat/gta-v-webmap" class="map-option clickable">REPOSITORY</a>
+            <a href="https://github.com/AcoMat" class="map-option clickable">GITHUB</a>
         </div>
         <div class="canvas-container">
             <canvas id="myCanvas"></canvas>
@@ -36,13 +40,12 @@
     </div>
     <audio id="menu_select" src="http://127.0.0.1:5500/src/assets/audio/menu_select.wav"></audio>
     <audio id="menu_map_move" src="http://127.0.0.1:5500/src/assets/audio/menu_map_move.wav"></audio>
+    <audio id="menu_map_move2" src="http://127.0.0.1:5500/src/assets/audio/menu_map_move.wav"></audio>
     <audio id="map_source_selected" src="http://127.0.0.1:5500/src/assets/audio/menu_scroll.wav"></audio>
     <audio id="map_target_selected" src="http://127.0.0.1:5500/src/assets/audio/notification.mp3"></audio>
 </body>
-    <script src='https://unpkg.com/ngraph.graph@20.0.1/dist/ngraph.graph.min.js'></script>
-    <script src='https://unpkg.com/ngraph.path@1.3.1/dist/ngraph.path.min.js'></script>
-    <script type="module" src="main.js"></script>
+<script src='https://unpkg.com/ngraph.graph@20.0.1/dist/ngraph.graph.min.js'></script>
+<script src='https://unpkg.com/ngraph.path@1.3.1/dist/ngraph.path.min.js'></script>
+<script type="module" src="main.js"></script>
+
 </html>
-
-
-

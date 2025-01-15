@@ -19,7 +19,7 @@ window.addEventListener('scroll', reOffset);
 
 // Ajustar el tamaño del canvas al tamaño de la ventana
 function resizeCanvas() {
-    canvas.width = window.innerWidth - 140;
+    canvas.width = window.innerWidth - 500;
     canvas.height = window.innerHeight - 300;
     reOffset();
     redrawCanvas();
@@ -130,13 +130,21 @@ function handleMouseMove(e) {
     ctx.drawImage(image, netPanningX, netPanningY, image.width, image.height);
     dibujarPuntos(graph_data);
     pintarRuta(actualRoute);
+    const moveAudio = document.getElementById("menu_map_move");
+    const moveAudio2 = document.getElementById("menu_map_move2");
+    moveAudio.play()
+    setTimeout(() => { moveAudio2.play() }, 70);
 }
 
 
 //TODO: manejar bien los nodos seleccionados, quizas una variable para source y target, y reiniciar en nueva ruta
 let actualRoute = null
 
-document.getElementById('myCanvas').addEventListener('dblclick', function (event) {
+document.getElementById('myCanvas').addEventListener('dblclick', mapDblClick);
+
+function mapDblClick(event) {
+    const srcSelected = document.getElementById("map_source_selected");
+    const tgtSelected = document.getElementById("map_target_selected");
     const coordenadas = obtenerCoordenadasRelativas(event);
     console.log(`Coordenadas relativas: X=${coordenadas.x}, Y=${coordenadas.y}`);
     let nearestNode = buscarNodoMasCercano(coordenadas.x, coordenadas.y);
@@ -144,13 +152,15 @@ document.getElementById('myCanvas').addEventListener('dblclick', function (event
     if (sourceSelected === null) {
         sourceSelected = nearestNode;
         actualRoute = null
+        srcSelected.play()
     } else {
         actualRoute = buscarRuta(sourceSelected, nearestNode);
         console.log(actualRoute);
         pintarRuta(actualRoute);
         sourceSelected = null;
+        tgtSelected.play()
     }
-});
+};
 
 // Función para dibujar puntos rojos
 function dibujarPuntos(coordenadas) {
@@ -194,6 +204,7 @@ function buscarNodoMasCercano(x, y) {
 }
 
 
+
 function pintarNodoMasCercano(nearestNode) {
     ctx.fillStyle = 'blue';
     ctx.beginPath();
@@ -203,7 +214,7 @@ function pintarNodoMasCercano(nearestNode) {
 
 //
 //Creo el grafo
-var g = createGraph();
+let g = createGraph();
 
 //Agrego nodos
 for (let i = 0; i < graph_data.nodes.length; i++) {
@@ -254,7 +265,7 @@ function pintarRuta(listaNodos) {
 
 
 
-const menuOptions = document.querySelectorAll('.map-option');
+const menuOptions = document.querySelectorAll('.clickable');
 
 menuOptions.forEach(option => {
     option.addEventListener('click', (event) => {
@@ -263,20 +274,31 @@ menuOptions.forEach(option => {
     });
 });
 
-function mapMovement() {
-    preventDefault();
-    let $mapMovement = document.getElementById("menu_map_move");
-    $mapMovement.play()
-}
 
 function mapSourceSelected() {
-    preventDefault();
-    let $mapSourceSelected = document.getElementById("map_source_selected");
+    const $mapSourceSelected = document.getElementById("map_source_selected");
     $mapSourceSelected.play()
 }
 
 function mapTargetSelected() {
-    preventDefault();
-    let $mapTargetSelected = document.getElementById("map_target_selected");
+    const $mapTargetSelected = document.getElementById("map_target_selected");
     $mapTargetSelected.play()
 }
+
+
+function updateDayAndTime() {
+    const now = new Date();
+
+    const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+    const currentDay = days[now.getDay()];
+
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const currentTime = `${hours}:${minutes}`;
+
+    const $timeDisplay = document.getElementById("timeDisplay");
+    $timeDisplay.textContent = `${currentDay}  ${currentTime}`;
+}
+
+updateDayAndTime();
+setInterval(updateDayAndTime, 60000);

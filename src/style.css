@@ -1,18 +1,17 @@
 body {
     margin: 0;
-    background-color: #1c1b1c;
+    background-image: url("http://127.0.0.1:5500/src/assets/background.jpg");
     color: white;
 }
 
 .game-container {
-    margin-top: 50px;
+    margin: 50px 250px;
 }
 
 .game-info {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 0 70px;
 }
 
 .git-avatar {
@@ -32,14 +31,14 @@ body {
     display: flex;
     flex-direction: column;
     text-align: end;
-    justify-content: space-between;
+    align-content: space-between;
 }
 
 .game-menu {
-    margin: 20px 70px;
+    padding: 20px 0;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: end;
     gap: 10px;
 }
 
@@ -47,11 +46,24 @@ body {
     flex: 1;
     padding: 10px 30px;
     border-radius: 0px;
-    background-color: #3f3f3f6b;
+    background-color: #141414c5;
     border-style: none;
     cursor: pointer;
     color: white;
-    ;
+    text-align: center;
+    font-family:sans-serif;
+}
+
+.map-option-disabled {
+    flex: 1;
+    padding: 10px 30px;
+    border-radius: 0px;
+    background-color: #141414c5;
+    border-style: none;
+    cursor: not-allowed;
+    color: rgba(158, 158, 158, 0.775);
+    text-align: center;
+    font-family:sans-serif;
 }
 
 canvas {
@@ -60,10 +72,25 @@ canvas {
     display: block;
 }
 
-.canvas-container {
-    margin: 0 70px;
-}
-
 .title {
     font-size: 2rem;
 }
+
+
+.selected {
+    border-top: 6px solid #296bb0;
+}
+
+.roboto-font {
+    font-family: "Roboto", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings:
+      "wdth" 75;
+  }
+  
+  a {
+    text-decoration: none;
+    color: white;
+  }
