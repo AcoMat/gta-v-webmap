@@ -11,7 +11,7 @@ export default class CanvasController {
 
         this.offset = { x: 0, y: 0 };
 
-        this.netPanning = { x: -500, y: -500 };
+        this.netPanning = { x: 0, y: 0 };
 
         this.mouseDragging = false;
         this.mouseDragStart = { x: 0, y: 0 };
@@ -22,16 +22,28 @@ export default class CanvasController {
         this.image.src = imageSrc;
         this.image.onload = () => {
             this.resizeCanvas();
-            this.reOffset();
-            this.redrawCanvas();
         };
+
+        this.playerIco = new Image();
+        this.playerIco.src = "http://127.0.0.1:5500/src/assets/icons/6.png";
+
+        this.markerIco = new Image();
+        this.markerIco.src = "http://127.0.0.1:5500/src/assets/icons/marker.png";
 
         this.canvas.addEventListener("mousedown", (e) => { this.handleMouseDown(e); });
         this.canvas.addEventListener("mousemove", (e) => { this.handleMouseMove(e); });
         this.canvas.addEventListener("mouseup", (e) => { this.handleMouseUp(e); });
         this.canvas.addEventListener("mouseout", (e) => { this.handleMouseUp(e); });
+        
         this.canvas.addEventListener('dblclick', (e) => { this.mapDblClick(e); });
-
+        
+        // Soporte Movil
+        this.canvas.addEventListener("touchstart", (e) => { this.handleTouchStart(e); });
+        this.canvas.addEventListener("touchmove", (e) => { this.handleTouchMove(e); });
+        this.canvas.addEventListener("touchend", (e) => { this.handleTouchEnd(e); });
+        this.canvas.addEventListener("touchcancel", (e) => { this.handleTouchEnd(e); });
+        this.lastTouchTime = 0;
+        this.doubleTouchThreshold = 300;
     }
 
     reOffset() {
@@ -40,8 +52,22 @@ export default class CanvasController {
     }
 
     resizeCanvas() {
-        this.canvas.width = window.innerWidth - 500;
-        this.canvas.height = window.innerHeight - 300;
+        if(window.innerWidth < 768){
+            this.canvas.width = window.innerWidth - 20;
+            this.canvas.height = window.innerHeight - 300;
+        }else {
+            this.canvas.width = window.innerWidth - 500;
+            this.canvas.height = window.innerHeight - 300;
+        }
+        // Calcula el centro de la imagen y el canvas
+        const centerX = (this.image.width - this.cw) / 2 - 800;
+        const centerY = (this.image.height - this.ch) / 2 + 1500;
+
+        // Ajusta el panning inicial para centrar la imagen
+        this.netPanning.x = -centerX;
+        this.netPanning.y = -centerY;
+
+        // Actualiza el offset y redibuja el canvas
         this.reOffset();
         this.redrawCanvas();
     }
@@ -51,20 +77,12 @@ export default class CanvasController {
         this.ctx.drawImage(this.image, this.netPanning.x, this.netPanning.y, this.image.width, this.image.height);
         this.drawGraphNodes(graph_data);
         this.drawRoute(this.gps.actualRoute);
+        this.drawIcons();
     }
 
-    drawNearestNode(nearestNode) {
-        this.ctx.fillStyle = 'blue';
-        this.ctx.beginPath();
-        this.ctx.arc(nearestNode.x + this.netPanning.x, nearestNode.y + this.netPanning.y, 3, 0, Math.PI * 2);
-        this.ctx.fill();
-    }
-
-    drawRoute(nodeList) {
-        if (!nodeList || nodeList.length === 0) {
-            console.log("No hay ruta para dibujar");
-            return;
-        }
+    drawRoute() {
+        const nodeList = this.gps.actualRoute;
+        if(!nodeList) return;
         this.ctx.strokeStyle = 'purple';
         this.ctx.lineWidth = 3;
 
@@ -77,16 +95,25 @@ export default class CanvasController {
         for (let i = 1; i < nodeList.length; i++) {
             this.ctx.lineTo(Number(nodeList[i].data.x) + this.netPanning.x, Number(nodeList[i].data.y) + this.netPanning.y);
         }
-
-        // Terminar el dibujo
         this.ctx.stroke();
+    }
+
+    drawIcons() {
+        const source = this.gps.source
+        const target = this.gps.target
+        if(source){
+            this.ctx.drawImage(this.playerIco, source.x - 12 + this.netPanning.x, source.y - 12 + this.netPanning.y, 24, 24);
+        }
+        if(target){
+            this.ctx.drawImage(this.markerIco, target.x - 12 + this.netPanning.x, target.y - 12 + this.netPanning.y, 24, 24);
+        }
     }
 
     drawGraphNodes(graph) {
         this.ctx.fillStyle = 'green';
         graph.nodes.forEach(node => {
             this.ctx.beginPath();
-            this.ctx.arc(node.x + this.netPanning.x, node.y + this.netPanning.y, 1, 0, Math.PI * 2);
+            this.ctx.arc(node.x + this.netPanning.x, node.y + this.netPanning.y, 3, 0, Math.PI * 2);
             this.ctx.fill();
         });
     }
@@ -129,10 +156,19 @@ export default class CanvasController {
     }
 
     mapDblClick(e) {
-        let mouse = {
-            x: e.clientX - this.offset.x - this.netPanning.x,
-            y: e.clientY - this.offset.y - this.netPanning.y
-        };
+        let mouse = {};
+        if(!e.clientX){
+            mouse = {
+                x: e.touches[0].clientX - this.offset.x - this.netPanning.x,
+                y: e.touches[0].clientY - this.offset.y - this.netPanning.y
+            }
+            console.log("Touch");
+        }else {
+            mouse = {
+                x: e.clientX - this.offset.x - this.netPanning.x,
+                y: e.clientY - this.offset.y - this.netPanning.y
+            };
+        }
         console.log(`Coordenadas relativas: X=${mouse.x}, Y=${mouse.y}`);
         console.log(this.gps);
 
@@ -140,24 +176,69 @@ export default class CanvasController {
         if (this.pathFinder) {
             let nearestNode = this.pathFinder.findNearestNode(mouse.x, mouse.y);
             if (!nearestNode) return;
-            this.drawNearestNode(nearestNode);
 
             if (this.gps.source === null || this.gps.actualRoute !== null) {
                 this.gps.source = nearestNode;
                 this.gps.target = null;
                 this.gps.actualRoute = null;
                 document.getElementById("map_source_selected").play();
+                this.redrawCanvas();
             } else {
                 this.gps.target = nearestNode;
                 this.gps.actualRoute = this.pathFinder.findRoute(this.gps.source, nearestNode);
                 console.log(this.gps.actualRoute);
-                this.drawRoute(this.gps.actualRoute);
+                this.drawRoute();
                 document.getElementById("map_target_selected").play();
             }
+            this.drawIcons();
         } else {
             console.error("PathFinder is not defined");
         }
     };
+
+    //SOPORTE MOVIL
+
+    handleTouchStart(e) {
+        e.preventDefault();
+        const touch = e.touches[0];
+        this.mouseDragStart = { x: touch.clientX - this.offset.x, y: touch.clientY - this.offset.y };
+        this.mouseDragging = true;
+
+        // Doble toque
+        const currentTime = new Date().getTime();
+        const timeDifference = currentTime - this.lastTouchTime;
+
+        if (timeDifference < this.doubleTouchThreshold) {
+            // Detectado doble toque
+            this.mapDblClick(e);  // Llamar a la función de doble clic
+        }
+        this.lastTouchTime = currentTime;
+    }
+ 
+    handleTouchMove(e) {
+        if (!this.mouseDragging) { return; }
+    
+        e.preventDefault();
+        const touch = e.touches[0];
+        let dx = touch.clientX - this.offset.x - this.mouseDragStart.x;
+        let dy = touch.clientY - this.offset.y - this.mouseDragStart.y;
+    
+        this.mouseDragStart = { x: touch.clientX - this.offset.x, y: touch.clientY - this.offset.y };
+    
+        this.netPanning.x += dx;
+        this.netPanning.y += dy;
+    
+        const moveAudio = document.getElementById("menu_map_move");
+        const moveAudio2 = document.getElementById("menu_map_move2");
+        moveAudio.play()
+        setTimeout(() => { moveAudio2.play() },  Math.random() * (100 - 20) + 80);
+        this.redrawCanvas();
+    }
+    
+    handleTouchEnd(e) {
+        e.preventDefault();
+        this.mouseDragging = false;
+    }
 }
 
 

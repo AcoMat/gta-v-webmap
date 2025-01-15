@@ -5,7 +5,14 @@ body {
 }
 
 .game-container {
+    overflow: hidden;
     margin: 50px 250px;
+}
+
+@media (max-width: 768px) {
+    .game-container {
+        margin: 50px 20px;
+    }
 }
 
 .game-info {
@@ -35,15 +42,18 @@ body {
 }
 
 .game-menu {
-    padding: 20px 0;
+    margin: 20px 0;
     display: flex;
-    justify-content: center;
-    align-items: end;
+    justify-content: flex-start; 
+    align-items: center;
     gap: 10px;
+    overflow-x: auto;  
+    padding-bottom: 10px;  
 }
 
+
 .map-option {
-    flex: 1;
+    flex-shrink: 0; 
     padding: 10px 30px;
     border-radius: 0px;
     background-color: #141414c5;
@@ -51,11 +61,13 @@ body {
     cursor: pointer;
     color: white;
     text-align: center;
-    font-family:sans-serif;
+    font-family: sans-serif;
+    white-space: nowrap;
 }
 
+
 .map-option-disabled {
-    flex: 1;
+    flex-shrink: 0;
     padding: 10px 30px;
     border-radius: 0px;
     background-color: #141414c5;
@@ -63,7 +75,8 @@ body {
     cursor: not-allowed;
     color: rgba(158, 158, 158, 0.775);
     text-align: center;
-    font-family:sans-serif;
+    font-family: sans-serif;
+    white-space: nowrap;
 }
 
 canvas {

@@ -37,10 +37,17 @@ export default class PathFinder {
     }
 
     findNearestNode(x, y) {
-        const radius = 5;
-        console.log("nodo mas cercano", this.index.within(x, y, radius)[0]);
-        const nearestNode = graph_data.nodes[this.index.within(x, y, radius)[0]];
-        //TODO: agrandar el radius hasta que se encuentre un nodo
+        let radius = 5;
+        let nearestNodeIndex = this.index.within(x, y, radius)[0];
+    
+        // Increment the radius until a node is found
+        while (nearestNodeIndex === undefined) {
+            radius += 5;
+            nearestNodeIndex = this.index.within(x, y, radius)[0];
+        }
+    
+        console.log("Nodo más cercano", nearestNodeIndex);
+        const nearestNode = graph_data.nodes[nearestNodeIndex];
         return nearestNode;
     }
     
