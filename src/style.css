@@ -2,6 +2,7 @@ body {
     margin: 0;
     background-image: url("http://127.0.0.1:5500/src/assets/background.jpg");
     color: white;
+    height: 100%;
 }
 
 .game-container {
@@ -53,6 +54,7 @@ body {
 
 
 .map-option {
+    flex: 1;
     flex-shrink: 0; 
     padding: 10px 30px;
     border-radius: 0px;
@@ -66,17 +68,9 @@ body {
 }
 
 
-.map-option-disabled {
-    flex-shrink: 0;
-    padding: 10px 30px;
-    border-radius: 0px;
-    background-color: #141414c5;
-    border-style: none;
+.disabled {
     cursor: not-allowed;
     color: rgba(158, 158, 158, 0.775);
-    text-align: center;
-    font-family: sans-serif;
-    white-space: nowrap;
 }
 
 canvas {
@@ -107,3 +101,8 @@ canvas {
     text-decoration: none;
     color: white;
   }
+
+.disclaimer {
+    font-size: 0.9rem;
+    color: rgba(231, 231, 231, 0.726);
+}

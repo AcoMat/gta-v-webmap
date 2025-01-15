@@ -10,18 +10,15 @@
 
 ### TODO:
 * Agregar capas faltantes en el grafo que se utiliza para el gps (Puentes, Autopistas, Intersecciones complejas)
-* refactorizar el codigo, mejorar estructura, etc
-* Redimencionar pagina
 * Testeo general del grafo
 * Refinar curvas en el grafo
-* Refinar grafo en general (nodos muy juntos, conexiones incorrectas, etc)
-* Mejorar el renderizado de rutas (probar con una mascara)
 * Feat: Ser capaz de seleccionar cualquier punto en el mapa (crear un nuevo nodo y conectarlo automaticamente)
-* UX (sonidos, interfaz del juego, tamaño del mapa, etc)
-* Acceso rapido para borrar ruta
-* Leyenda en la parte inferior
 
 #### Recursos utilizados:
+- https://dip4fish.blogspot.com/2014/05/construct-graph-from-skeleton-image-of.html
 - https://stackoverflow.com/questions/41705405/finding-intersections-of-a-skeletonised-image-in-python-opencv
 - https://forum.processing.org/one/topic/how-to-detect-intersections-and-lines-if-possible
-
+- [anvaka/ngraph.path](https://github.com/anvaka/ngraph.path)
+- [github.com/mourner/kdbush](https://github.com/mourner/kdbush)
+- https://stackoverflow.com/questions/41705405/finding-intersections-of-a-skeletonised-image-in-python-opencv
+- https://skeleton-analysis.org/stable/index.html

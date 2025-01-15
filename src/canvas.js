@@ -54,9 +54,9 @@ export default class CanvasController {
     resizeCanvas() {
         if(window.innerWidth < 768){
             this.canvas.width = window.innerWidth - 20;
-            this.canvas.height = window.innerHeight - 300;
+            this.canvas.height = window.innerHeight - 320;
         }else {
-            this.canvas.width = window.innerWidth - 500;
+            this.canvas.width = window.innerWidth - window.innerWidth * 0.2;
             this.canvas.height = window.innerHeight - 300;
         }
         // Calcula el centro de la imagen y el canvas
