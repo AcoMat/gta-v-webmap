@@ -1,6 +1,69 @@
-img {
-    opacity: 0;
+body {
+    margin: 0;
+    background-color: #1c1b1c;
+    color: white;
+}
+
+.game-container {
+    margin-top: 50px;
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 70px;
+}
+
+.git-avatar {
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+}
+
+.profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    text-align: end;
+    justify-content: space-between;
+}
+
+.game-menu {
+    margin: 20px 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.map-option {
+    flex: 1;
+    padding: 10px 30px;
+    border-radius: 0px;
+    background-color: #3f3f3f6b;
+    border-style: none;
+    cursor: pointer;
+    color: white;
+    ;
 }
 
 canvas {
+    padding: 0;
+    margin: auto;
+    display: block;
+}
+
+.canvas-container {
+    margin: 0 70px;
+}
+
+.title {
+    font-size: 2rem;
 }

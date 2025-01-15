@@ -18,6 +18,8 @@
 * Mejorar el renderizado de rutas (probar con una mascara)
 * Feat: Ser capaz de seleccionar cualquier punto en el mapa (crear un nuevo nodo y conectarlo automaticamente)
 * UX (sonidos, interfaz del juego, tamaño del mapa, etc)
+* Acceso rapido para borrar ruta
+* Leyenda en la parte inferior
 
 #### Recursos utilizados:
 - https://stackoverflow.com/questions/41705405/finding-intersections-of-a-skeletonised-image-in-python-opencv

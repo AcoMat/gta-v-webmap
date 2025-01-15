@@ -1,12 +1,37 @@
 import KDBush from 'https://cdn.jsdelivr.net/npm/kdbush/+esm';
-import {graph_data} from './util/graph_data.js';
+import { graph_data } from './util/graph_data.js';
 
 // Obtener el canvas y su contexto
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 let cw = canvas.width;
 let ch = canvas.height;
-const image = document.getElementById('map');
+
+const image = new Image();
+image.src = 'http://127.0.0.1:5500/src/assets/map_image.jpg';
+image.onload = () => {
+    resizeCanvas();
+    ctx.drawImage(image, 0, 0, image.width, image.height);
+};
+
+window.addEventListener('resize', resizeCanvas);
+window.addEventListener('scroll', reOffset);
+
+// Ajustar el tamaño del canvas al tamaño de la ventana
+function resizeCanvas() {
+    canvas.width = window.innerWidth - 140;
+    canvas.height = window.innerHeight - 300;
+    reOffset();
+    redrawCanvas();
+}
+
+// Redibujar contenido del canvas
+function redrawCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, netPanningX, netPanningY, image.width, image.height);
+    dibujarPuntos(graph_data);
+    pintarRuta(actualRoute);
+}
 
 let sourceSelected = null;
 
@@ -60,7 +85,7 @@ function handleMouseUp(e) {
     // clear the isDragging flag
     isDown = false;
     console.log("netPanningX: " + netPanningX + " netPanningY: " + netPanningY);
-    
+
 }
 
 function handleMouseOut(e) {
@@ -111,7 +136,7 @@ function handleMouseMove(e) {
 //TODO: manejar bien los nodos seleccionados, quizas una variable para source y target, y reiniciar en nueva ruta
 let actualRoute = null
 
-document.getElementById('myCanvas').addEventListener('dblclick', function(event) {
+document.getElementById('myCanvas').addEventListener('dblclick', function (event) {
     const coordenadas = obtenerCoordenadasRelativas(event);
     console.log(`Coordenadas relativas: X=${coordenadas.x}, Y=${coordenadas.y}`);
     let nearestNode = buscarNodoMasCercano(coordenadas.x, coordenadas.y);
@@ -133,7 +158,7 @@ function dibujarPuntos(coordenadas) {
     ctx.fillStyle = 'green'; // Color de los puntos
     coordenadas.nodes.forEach(coord => {
         ctx.beginPath();
-        ctx.arc(coord.x+netPanningX, coord.y+netPanningY,1, 0, Math.PI * 2); // Dibuja un círculo
+        ctx.arc(coord.x + netPanningX, coord.y + netPanningY, 1, 0, Math.PI * 2); // Dibuja un círculo
         ctx.fill();
     });
 }
@@ -143,8 +168,8 @@ dibujarPuntos(graph_data)
 const index = new KDBush(graph_data.nodes.length)
 
 for (let i = 0; i < graph_data.nodes.length; i++) {
-    const {x, y} = graph_data.nodes[i];
-    index.add(x,y);
+    const { x, y } = graph_data.nodes[i];
+    index.add(x, y);
 }
 
 index.finish();
@@ -160,7 +185,7 @@ function obtenerCoordenadasRelativas(event) {
     return { x, y };
 }
 
-function buscarNodoMasCercano(x,y) {
+function buscarNodoMasCercano(x, y) {
     const radius = 5;
     console.log("nodo mas cercano", index.within(x, y, radius)[0]);
     const nearestNode = graph_data.nodes[index.within(x, y, radius)[0]];
@@ -172,7 +197,7 @@ function buscarNodoMasCercano(x,y) {
 function pintarNodoMasCercano(nearestNode) {
     ctx.fillStyle = 'blue';
     ctx.beginPath();
-    ctx.arc(nearestNode.x+netPanningX, nearestNode.y+netPanningY, 3, 0, Math.PI * 2);
+    ctx.arc(nearestNode.x + netPanningX, nearestNode.y + netPanningY, 3, 0, Math.PI * 2);
     ctx.fill();
 }
 
@@ -182,18 +207,16 @@ var g = createGraph();
 
 //Agrego nodos
 for (let i = 0; i < graph_data.nodes.length; i++) {
-    const {id, x, y} = graph_data.nodes[i];
+    const { id, x, y } = graph_data.nodes[i];
     g.addNode(id.toString(), {
         x: x.toString(),
         y: y.toString()
     })
 }
 
-console.log(g.getNode('20'));
-
 //Agrego aristas
 for (let i = 0; i < graph_data.edges.length; i++) {
-    const {source, target} = graph_data.edges[i];
+    const { source, target } = graph_data.edges[i];
     g.addLink(source.toString(), target.toString());
 }
 
@@ -201,39 +224,59 @@ for (let i = 0; i < graph_data.edges.length; i++) {
 //Pathfinding
 let pathFinder = ngraphPath.aStar(g);
 
-let fromNodeId = "20";
-let toNodeId = "1534";
-let foundPath = pathFinder.find(fromNodeId, toNodeId);
-// foundPath is array of nodes in the graph
-console.log(foundPath);
-
-
 function buscarRuta(source, target) {
     console.log("Buscando ruta de", source, "a", target);
     return pathFinder.find(source.id.toString(), target.id.toString());
 }
 
 function pintarRuta(listaNodos) {
-    if(!listaNodos || listaNodos.length === 0) {
+    if (!listaNodos || listaNodos.length === 0) {
         console.log("No se encontró ruta");
         return;
     }
     ctx.strokeStyle = 'purple';
     ctx.lineWidth = 3;
-    
+
     // Comenzar a dibujar
     ctx.beginPath();
-    
+
     // Mover al primer nodo
-    ctx.moveTo(Number(listaNodos[0].data.x)+netPanningX, Number(listaNodos[0].data.y)+netPanningY);
+    ctx.moveTo(Number(listaNodos[0].data.x) + netPanningX, Number(listaNodos[0].data.y) + netPanningY);
 
     // Iterar sobre los nodos restantes y dibujar líneas
     for (let i = 1; i < listaNodos.length; i++) {
-        ctx.lineTo(Number(listaNodos[i].data.x)+netPanningX, Number(listaNodos[i].data.y)+netPanningY);
+        ctx.lineTo(Number(listaNodos[i].data.x) + netPanningX, Number(listaNodos[i].data.y) + netPanningY);
     }
 
     // Terminar el dibujo
     ctx.stroke();
 }
 
-//clear ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+
+const menuOptions = document.querySelectorAll('.map-option');
+
+menuOptions.forEach(option => {
+    option.addEventListener('click', (event) => {
+        let $menuSelect = document.getElementById("menu_select");
+        $menuSelect.play();
+    });
+});
+
+function mapMovement() {
+    preventDefault();
+    let $mapMovement = document.getElementById("menu_map_move");
+    $mapMovement.play()
+}
+
+function mapSourceSelected() {
+    preventDefault();
+    let $mapSourceSelected = document.getElementById("map_source_selected");
+    $mapSourceSelected.play()
+}
+
+function mapTargetSelected() {
+    preventDefault();
+    let $mapTargetSelected = document.getElementById("map_target_selected");
+    $mapTargetSelected.play()
+}
