@@ -16,7 +16,7 @@ export default class CanvasController {
         this.mouseDragging = false;
         this.mouseDragStart = { x: 0, y: 0 };
 
-        this.gps = { source: null, target: null, actualRoute: null };
+        this.gps = { source: null, sourceNode: null, target: null, targetNode: null, actualRoute: null };
 
         this.image = new Image();
         this.image.src = imageSrc;
@@ -151,7 +151,7 @@ export default class CanvasController {
         const moveAudio = document.getElementById("menu_map_move");
         const moveAudio2 = document.getElementById("menu_map_move2");
         moveAudio.play()
-        setTimeout(() => { moveAudio2.play() }, 70);
+        setTimeout(() => { moveAudio2.play() },  Math.random() * (100 - 20) + 80);
 
     }
 
@@ -169,23 +169,21 @@ export default class CanvasController {
                 y: e.clientY - this.offset.y - this.netPanning.y
             };
         }
-        console.log(`Coordenadas relativas: X=${mouse.x}, Y=${mouse.y}`);
-        console.log(this.gps);
-
-
         if (this.pathFinder) {
             let nearestNode = this.pathFinder.findNearestNode(mouse.x, mouse.y);
             if (!nearestNode) return;
 
             if (this.gps.source === null || this.gps.actualRoute !== null) {
-                this.gps.source = nearestNode;
+                this.gps.source = mouse;
+                this.gps.sourceNode = nearestNode;
                 this.gps.target = null;
                 this.gps.actualRoute = null;
                 document.getElementById("map_source_selected").play();
                 this.redrawCanvas();
             } else {
-                this.gps.target = nearestNode;
-                this.gps.actualRoute = this.pathFinder.findRoute(this.gps.source, nearestNode);
+                this.gps.target = mouse;
+                this.gps.targetNode = nearestNode;
+                this.gps.actualRoute = this.pathFinder.findRoute(this.gps.sourceNode, nearestNode);
                 console.log(this.gps.actualRoute);
                 this.drawRoute();
                 document.getElementById("map_target_selected").play();
