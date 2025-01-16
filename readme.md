@@ -1,6 +1,8 @@
 # Mapa ficticio interactivo con gps
 ## Basado en el mapa del videojuego GTA 5
 
+![image](https://github.com/user-attachments/assets/4f382dec-bf82-450c-b8c7-f32bffa45f8c)
+
 ![preview](https://github.com/user-attachments/assets/cc2e67c2-8412-40fe-b865-b0ee943d5a84)
 
 ### Desafios:
