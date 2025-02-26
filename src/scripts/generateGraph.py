@@ -72,7 +72,7 @@ export const graph_data = {{
     return js_content
 
 if __name__ == "__main__":
-    image_path = "F:/VSCODE-Repos/gta-v-webmap/src/util/map_image.png"  # Cambia esto al nombre de tu archivo
+    image_path = "" 
     graph = process_image(image_path)
     
     graph_js = graph_to_js(graph)

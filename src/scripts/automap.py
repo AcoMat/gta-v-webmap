@@ -184,7 +184,7 @@ export const graph_data = {{
 
 
 # Ruta de la imagen del mapa y salida JavaScript
-image_path = r"F:\VSCODE-Repos\gta-v-webmap\src\util\map_skeleton.png"
-output_js_path = r"F:\VSCODE-Repos\gta-v-webmap\src\util\graph_data.js"
+image_path = r""
+output_js_path = r""
 
 main(image_path, output_js_path)
