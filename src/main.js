@@ -4,7 +4,7 @@ import Canvas from './canvas.js';
 import PathFinder from './pathfinder.js';
 
 const pathFinder = new PathFinder();
-const canvasController = new Canvas(canvas,"../assets/map_image.jpg", pathFinder);
+const canvasController = new Canvas(canvas,"../public/assets/map_image.jpg", pathFinder);
 
 
 // Ajustar el tamaño del canvas al tamaño de la ventana
