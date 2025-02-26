@@ -25,10 +25,10 @@ export default class CanvasController {
         };
 
         this.playerIco = new Image();
-        this.playerIco.src = "http://127.0.0.1:5500/src/assets/icons/6.png";
+        this.playerIco.src = "./src/assets/icons/6.png";
 
         this.markerIco = new Image();
-        this.markerIco.src = "http://127.0.0.1:5500/src/assets/icons/marker.png";
+        this.markerIco.src = "./src/assets/icons/marker.png";
 
         this.canvas.addEventListener("mousedown", (e) => { this.handleMouseDown(e); });
         this.canvas.addEventListener("mousemove", (e) => { this.handleMouseMove(e); });
