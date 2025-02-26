@@ -25,10 +25,10 @@ export default class CanvasController {
         };
 
         this.playerIco = new Image();
-        this.playerIco.src = "./src/assets/icons/6.png";
+        this.playerIco.src = "../assets/icons/gps.png";
 
         this.markerIco = new Image();
-        this.markerIco.src = "./src/assets/icons/marker.png";
+        this.markerIco.src = "../assets/icons/marker.png";
 
         this.canvas.addEventListener("mousedown", (e) => { this.handleMouseDown(e); });
         this.canvas.addEventListener("mousemove", (e) => { this.handleMouseMove(e); });
@@ -150,7 +150,7 @@ export default class CanvasController {
         this.redrawCanvas();
         const moveAudio = document.getElementById("menu_map_move");
         const moveAudio2 = document.getElementById("menu_map_move2");
-        moveAudio.play()
+        moveAudio.play();
         setTimeout(() => { moveAudio2.play() },  Math.random() * (100 - 20) + 80);
 
     }
