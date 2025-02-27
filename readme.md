@@ -15,6 +15,8 @@ Este proyecto es un mapa interactivo basado en **Grand Theft Auto V**, que permi
 * Extraer el grafo de rutas a partir de una imagen mediante su procesamiento y esqueletización.
 * Manejar nodos y conexiones dinámicas en un grafo basado en la estructura vial del juego.
 
+![Captura de pantalla 2025-02-26 201828](https://github.com/user-attachments/assets/ab8a7f4a-a3c7-4b23-8084-a983416a163b)
+
 ## Estado actual y mejoras pendientes
 
 ### TODO:
